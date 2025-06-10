@@ -1,0 +1,9 @@
+<h2>{{classData.name}}</h2>
+<p>{{classData.description}}</p>
+
+<h3>Students:</h3>
+<ul>
+  {{#each classData.students}}
+    <li>{{this.name}} ({{this.email}})</li>
+  {{/each}}
+</ul>

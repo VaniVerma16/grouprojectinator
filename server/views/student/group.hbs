@@ -1,0 +1,52 @@
+<div class="student-group-card">
+  <h2>My Group(s)</h2>
+  {{#if error}}
+    <p style="color: red;">{{error}}</p>
+  {{else if groups.length}}
+    {{#each groups}}
+      <div class="group-box">
+        <h3>{{name}} ({{projectId.title}})</h3>
+        <p>Group Progress: {{../groupProgress.[_id].completed}} / {{../groupProgress.[_id].total}} ({{../groupProgress.[_id].percent}}%)</p>
+        <p><strong>Progress:</strong> <span style="color: #2563eb;">{{../groupProgress.[_id].percent}}%</span></p>
+        <h4>Members:</h4>
+        <ul>
+          {{#each ../groupProgress.[_id].members}}
+            <li>
+              {{#if this.studentId.name}}
+                {{this.studentId.name}} {{#if this.isLeader}}<strong>(Leader)</strong>{{/if}}
+              {{else}}
+                [Missing student]
+              {{/if}}
+            </li>
+          {{/each}}
+        </ul>
+      </div>
+    {{/each}}
+  {{else}}
+    <p>You are not assigned to any group yet.</p>
+  {{/if}}
+</div>
+
+<style>
+.student-group-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  padding: 2rem 2.5rem;
+  max-width: 500px;
+  margin: 3rem auto;
+}
+.group-box {
+  background: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  padding: 16px;
+}
+.group-box ul {
+  padding-left: 1.2rem;
+}
+.group-box li {
+  margin-bottom: 6px;
+}
+</style> 

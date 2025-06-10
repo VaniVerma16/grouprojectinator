@@ -1,0 +1,20 @@
+<h2>Groups for {{project.title}}</h2>
+
+{{#if groups.length}}
+  {{#each groups}}
+    <h3>{{name}}</h3>
+    <ul>
+      {{#each members}}
+        <li>
+          {{#if this.studentId.name}}
+            {{this.studentId.name}} {{#if this.isLeader}}<strong>(Leader)</strong>{{/if}}
+          {{else}}
+            [Missing student]
+          {{/if}}
+        </li>
+      {{/each}}
+    </ul>
+  {{/each}}
+{{else}}
+  <p>No groups assigned yet.</p>
+{{/if}}

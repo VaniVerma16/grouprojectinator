@@ -1,0 +1,204 @@
+<h2>Assign Groups for: {{project.title}}</h2>
+
+<p><strong>Class:</strong> {{classData.name}}</p>
+
+<label>Number of Groups:</label>
+<input type="number" id="groupCount" min="1" required />
+
+<button type="button" id="autoAssignBtn">Auto Assign Groups</button>
+
+<form
+  action="/project/{{project._id}}/assign-groups"
+  method="POST"
+  id="groupForm"
+>
+  <div id="groupContainer"></div>
+  <button type="submit" id="saveBtn" disabled>Save Groups</button>
+</form>
+
+<script>
+  const students = {{{json classData.students}}};
+  const groupContainer = document.getElementById("groupContainer");
+  const saveBtn = document.getElementById("saveBtn");
+  const groupForm = document.getElementById("groupForm");
+
+  // Function to shuffle array (Fisher-Yates algorithm)
+  function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+  document.getElementById("autoAssignBtn").addEventListener("click", () => {
+    const numGroups = parseInt(document.getElementById("groupCount").value);
+    if (!numGroups || numGroups < 1) {
+      alert("Please enter a valid number of groups");
+      return;
+    }
+
+    // Shuffle students randomly
+    const shuffledStudents = shuffleArray([...students]);
+    const groups = Array.from({ length: numGroups }, () => []);
+
+    // Distribute students evenly across groups
+    shuffledStudents.forEach((student, index) => {
+      groups[index % numGroups].push(student);
+    });
+
+    groupContainer.innerHTML = "";
+    saveBtn.disabled = false;
+
+    groups.forEach((group, groupIndex) => {
+      const groupDiv = document.createElement("div");
+      groupDiv.className = "group-box";
+      groupDiv.style.marginBottom = "24px";
+      groupDiv.style.padding = "16px";
+      groupDiv.style.border = "1px solid #ccc";
+      groupDiv.style.borderRadius = "8px";
+
+      groupDiv.innerHTML = `
+        <h4 style="margin-top: 0;">Group ${groupIndex + 1}</h4>
+        <div class="group-members"></div>
+      `;
+
+      const membersContainer = groupDiv.querySelector('.group-members');
+      group.forEach((student, studentIndex) => {
+        const memberDiv = document.createElement('div');
+        memberDiv.className = 'group-member-row';
+        memberDiv.style.display = 'flex';
+        memberDiv.style.alignItems = 'center';
+        memberDiv.style.margin = '8px 0';
+
+        memberDiv.innerHTML = `
+          <input type="radio"
+                 name="groupLeader[${groupIndex}]"
+                 value="${student._id}"
+                 ${studentIndex === 0 ? "checked" : ""}
+                 style="margin-right: 8px; accent-color: #2563eb;" />
+          <span style="font-weight: 500; margin-right: 8px;">${student.name}</span>
+          <input type="hidden"
+                 name="groupMembers[${groupIndex}][]"
+                 value="${student._id}" />
+          <span class="leader-label" style="color: #2563eb; font-size: 0.95em; margin-left: 8px; display: none;">(Leader)</span>
+        `;
+        membersContainer.appendChild(memberDiv);
+      });
+      groupContainer.appendChild(groupDiv);
+    });
+
+    // Show (Leader) label only for the selected radio in each group
+    document.querySelectorAll('.group-members').forEach(group => {
+      group.addEventListener('change', function(e) {
+        if (e.target.type === 'radio') {
+          group.querySelectorAll('.leader-label').forEach(label => label.style.display = 'none');
+          const selected = e.target.closest('.group-member-row').querySelector('.leader-label');
+          if (selected) selected.style.display = '';
+        }
+      });
+      // Set initial (Leader) label
+      const checked = group.querySelector('input[type="radio"]:checked');
+      if (checked) {
+        const label = checked.closest('.group-member-row').querySelector('.leader-label');
+        if (label) label.style.display = '';
+      }
+    });
+  });
+
+  // Form submission handler
+  groupForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    
+    // Validate that each group has a leader
+    const groupLeaders = document.querySelectorAll('input[type="radio"]:checked');
+    if (groupLeaders.length !== parseInt(document.getElementById("groupCount").value)) {
+      alert("Each group must have a leader selected");
+      return;
+    }
+
+    // Log the form data before submission
+    const formData = new FormData(groupForm);
+    const data = {
+      groupMembers: {},
+      groupLeader: {}
+    };
+
+    // Process form data
+    for (let [key, value] of formData.entries()) {
+      if (key.startsWith('groupMembers[')) {
+        const index = key.match(/\[(\d+)\]/)[1];
+        if (!data.groupMembers[index]) {
+          data.groupMembers[index] = [];
+        }
+        data.groupMembers[index].push(value);
+      } else if (key.startsWith('groupLeader[')) {
+        const index = key.match(/\[(\d+)\]/)[1];
+        data.groupLeader[index] = value;
+      }
+    }
+
+    console.log('Submitting group data:', data);
+
+    try {
+      const response = await fetch(groupForm.action, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      // Redirect to view groups page on success
+      window.location.href = `/project/{{project._id}}/view-groups`;
+    } catch (error) {
+      console.error('Error saving groups:', error);
+      alert('Failed to save groups. Please try again.');
+    }
+  });
+</script>
+
+<style>
+  .group-box {
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    padding: 16px;
+  }
+  .group-members {
+    padding-left: 24px;
+  }
+  .group-members > div {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+    margin-top: 0;
+  }
+  .group-members input[type="radio"] {
+    accent-color: #2563eb;
+  }
+  .leader-label {
+    color: #2563eb;
+    font-size: 0.95em;
+    margin-left: 8px;
+    display: none;
+  }
+  button {
+    padding: 8px 16px;
+    margin: 10px 0;
+    cursor: pointer;
+  }
+  button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+  input[type="number"] {
+    padding: 5px;
+    margin: 5px 0;
+  }
+</style>

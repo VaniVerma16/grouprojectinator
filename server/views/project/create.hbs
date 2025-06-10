@@ -1,0 +1,45 @@
+<h2>Create Project</h2>
+
+{{#if error}}
+  <p style="color:red;">{{error}}</p>
+{{/if}}
+
+<form action="/project/create" method="POST">
+  <label>Title:</label><br />
+  <input type="text" name="title" required /><br />
+
+  <label>Description:</label><br />
+  <textarea name="description" rows="3" style="width:100%;"></textarea><br />
+
+  <label>Assign to Class:</label><br />
+  <select name="classId" required>
+    {{#each classes}}
+      <option value="{{this._id}}">{{this.name}}</option>
+    {{/each}}
+  </select><br /><br />
+
+  <h3>Tasks</h3>
+
+  <div id="task-list">
+    <div>
+      <input type="text" name="taskTitle" placeholder="Task title" required />
+      <input type="number" name="taskWeight" placeholder="Weightage (%)" required />
+    </div>
+  </div>
+
+  <button type="button" onclick="addTask()">Add Another Task</button><br /><br />
+
+  <button type="submit">Create Project</button>
+</form>
+
+<script>
+  function addTask() {
+    const container = document.getElementById('task-list');
+    const div = document.createElement('div');
+    div.innerHTML = `
+      <input type="text" name="taskTitle" placeholder="Task title" required />
+      <input type="number" name="taskWeight" placeholder="Weightage (%)" required />
+    `;
+    container.appendChild(div);
+  }
+</script>

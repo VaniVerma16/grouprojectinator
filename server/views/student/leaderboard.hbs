@@ -1,0 +1,92 @@
+<div class="leaderboard-card">
+  <h2>Leaderboard</h2>
+  <form method="get" action="/leaderboard" style="margin-bottom: 1.5rem; text-align:center;">
+    <label for="projectSelect"><strong>Select Project:</strong></label>
+    <select id="projectSelect" name="projectId" onchange="this.form.submit()">
+      <option value="">All Projects</option>
+      {{#each allProjects}}
+        <option value="{{_id}}" {{#if (eq ../selectedProjectId _id)}}selected{{/if}}>{{title}}</option>
+      {{/each}}
+    </select>
+  </form>
+  {{#if error}}
+    <p style="color: red;">{{error}}</p>
+  {{else}}
+    <h3>Individual Progress</h3>
+    <table>
+      <tr>
+        <th>Student</th>
+        <th>Group</th>
+        <th>Completed</th>
+        <th>Total</th>
+        <th>Progress</th>
+      </tr>
+      {{#each studentStats}}
+        <tr>
+          <td>{{name}}</td>
+          <td>
+            <form action="/leaderboard/group/{{groupId}}" method="get" style="display:inline;">
+              <button type="submit" class="group-link-btn">{{group}}</button>
+            </form>
+          </td>
+          <td>{{completed}}</td>
+          <td>{{total}}</td>
+          <td>{{percent}}%</td>
+        </tr>
+      {{/each}}
+    </table>
+    <h3>Group Progress</h3>
+    <table>
+      <tr>
+        <th>Group</th>
+        <th>Completed</th>
+        <th>Total</th>
+        <th>Progress</th>
+      </tr>
+      {{#each groupStats}}
+        <tr>
+          <td>{{name}}</td>
+          <td>{{completed}}</td>
+          <td>{{total}}</td>
+          <td>{{percent}}%</td>
+        </tr>
+      {{/each}}
+    </table>
+  {{/if}}
+</div>
+<style>
+.leaderboard-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  padding: 2rem 2.5rem;
+  max-width: 700px;
+  margin: 3rem auto;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 2rem;
+}
+th, td {
+  border: 1px solid #ccc;
+  padding: 0.5rem 0.7rem;
+  text-align: center;
+}
+th {
+  background: #f3f4f6;
+}
+.group-link-btn {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.3rem 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.group-link-btn:hover {
+  background: #1d4ed8;
+}
+</style> 

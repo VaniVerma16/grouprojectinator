@@ -1,0 +1,12 @@
+<h2>Your Projects</h2>
+<ul>
+  {{#each projects}}
+    <li>
+      {{this.title}} -
+      <a href="/project/{{this._id}}/assign-groups">Assign Groups</a>
+    </li>
+  {{/each}}
+  
+
+</ul>
+

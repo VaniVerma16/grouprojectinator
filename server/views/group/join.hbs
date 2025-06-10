@@ -1,0 +1,11 @@
+<h2>Join Group</h2>
+
+{{#if error}}
+  <p style="color:red;">{{error}}</p>
+{{/if}}
+
+<form action="/group/join" method="POST">
+  <label>Enter Group Code:</label><br />
+  <input type="text" name="joinCode" required /><br /><br />
+  <button type="submit">Join Group</button>
+</form>

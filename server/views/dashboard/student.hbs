@@ -1,0 +1,39 @@
+<div class="dashboard-card">
+  <h2>Student Dashboard</h2>
+  <p>Welcome, student!</p>
+  <div class="dashboard-links">
+    <a href="/dashboard/student/group">View My Group</a>
+    <a href="/dashboard/student/projects">View My Projects & Tasks</a>
+    <a href="/leaderboard">View Leaderboard</a>
+  </div>
+</div>
+
+<style>
+.dashboard-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  padding: 2rem 2.5rem;
+  max-width: 400px;
+  margin: 3rem auto;
+  text-align: center;
+}
+.dashboard-links {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.dashboard-links a {
+  background: #2563eb;
+  color: #fff;
+  padding: 0.7rem 1.2rem;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+.dashboard-links a:hover {
+  background: #1d4ed8;
+}
+</style>

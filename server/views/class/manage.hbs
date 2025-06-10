@@ -1,0 +1,22 @@
+<h3>Your Classes</h3>
+
+<ul>
+  {{#each classes}}
+    <li>
+      {{this.name}}
+      -
+      <a href="/class/{{this._id}}/view">View</a>
+    </li>
+  {{/each}}
+</ul>
+
+<h2>Manage Your Classes</h2>
+
+{{#each classes}}
+  <div style="margin-bottom: 1rem;">
+    <strong>{{this.name}}</strong>
+    –
+    {{this.description}}<br />
+    <a href="/class/{{this._id}}/assign">Assign Students</a>
+  </div>
+{{/each}}

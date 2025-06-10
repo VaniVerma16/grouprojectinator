@@ -1,0 +1,14 @@
+<h2>Assign Students to Class: {{classData.name}}</h2>
+
+<form action="/class/{{classData._id}}/assign" method="POST">
+  {{#each students}}
+    <label>
+      <input type="checkbox" name="selectedStudents" value="{{this._id}}" {{#if this.alreadyAssigned}}disabled{{/if}} />
+      {{this.name}} ({{this.email}})
+      {{#if this.alreadyAssigned}}<span style="color: red;">(Already assigned to another class)</span>{{/if}}
+    </label><br />
+  {{/each}}
+
+  <br />
+  <button type="submit">Assign Selected Students</button>
+</form>
